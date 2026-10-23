@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+work/
+output/
+*.skill
+history.json
+snapshot.json
+*.labels.json
+.DS_Store

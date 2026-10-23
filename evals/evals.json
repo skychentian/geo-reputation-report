@@ -1,0 +1,40 @@
+{
+  "skill_name": "geo-reputation-report",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "把 ~/Downloads/品牌 A美誉度 GEO诊断 2026-10-15-数据包 生成竞品美誉度 HTML 报告，竞品用品牌 B、品牌 C，先出本期。",
+      "expected_output": "生成自包含 reputation-report.html，含本期三品牌对比、正/负面率趋势、平台差异，首期提示，低样本竞品标注。",
+      "files": [],
+      "expectations": [
+        "运行 extract_answers.py 并输出 answers.json",
+        "运行 classify.py 或走人工批次判定，labels 覆盖全部回答",
+        "运行 build_report.py 生成 reputation-report.html 和 history.json",
+        "报告没有 NaN/undefined，首期趋势有明确提示",
+        "竞品分层样本低于 20 时显示样本不足，而不是 0% 占比"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "上周的美誉度报告在 output/geo-reputation/品牌 A美誉度-2026-10-15，这周新数据包在 ~/Downloads/品牌 A美誉度-2026-10-22，追加一期，保持历史。",
+      "expected_output": "沿用同一 out 目录和 history.json，追加 2026-10-22 快照，趋势图出现两期数据。",
+      "files": [],
+      "expectations": [
+        "不覆盖或丢弃上一期 history",
+        "同一日期重跑只替换当天快照",
+        "趋势图显示多期数据"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "在现有品牌 A美誉度报告里加上境外竞品品牌 D和品牌 E，重新生成报告。",
+      "expected_output": "品牌列表和平台表增加新竞品；旧期没有数据的竞品显示样本不足或从趋势中省略。",
+      "files": [],
+      "expectations": [
+        "新竞品进入 brands 与平台表",
+        "旧期缺失数据不被补造成 0% 趋势",
+        "重新生成后报告仍通过 validate_report.py"
+      ]
+    }
+  ]
+}

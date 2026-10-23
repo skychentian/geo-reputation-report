@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>品牌 A · 品牌 B · 品牌 C｜AI 美誉度对比分析</title>
+<style>
+:root{
+  --ink:#17211b;
+  --ink-2:#3c473f;
+  --muted:#6c766f;
+  --muted-2:#8d958f;
+  --line:#e3ded2;
+  --line-strong:#d4ccbd;
+  --paper:#f3f0e8;
+  --card:#fffdf9;
+  --green-950:#082e22;
+  --green-900:#0b3d2e;
+  --green-800:#10513c;
+  --green-700:#14684b;
+  --green-600:#1c7a57;
+  --green-100:#e1eee7;
+  --gold:#c99a3f;
+  --gold-soft:#f3e7cd;
+  --red:#b5483f;
+  --red-soft:#f7e4df;
+  --pos:#1f7a55;
+  --neu:#d3b273;
+  --neg:#b5483f;
+  --shadow:0 18px 50px rgba(23,49,36,.07);
+  --shadow-soft:0 8px 24px rgba(23,49,36,.045);
+  --radius:22px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 92% 0%,rgba(201,154,63,.10),transparent 34rem),
+    radial-gradient(circle at 0% 18%,rgba(20,104,75,.07),transparent 38rem),
+    var(--paper);
+  font-family:var(--font);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+button{font:inherit;color:inherit}
+a{color:inherit}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.page{width:min(1180px,calc(100% - 40px));margin:0 auto;padding:26px 0 60px}
+.section{scroll-margin-top:78px;margin-top:22px}
+
+/* hero */
+.hero{
+  position:relative;overflow:hidden;color:#fff;border-radius:28px;
+  padding:42px 46px 36px;
+  background:linear-gradient(122deg,#072b20 0%,#0b3d2e 34%,#10513c 68%,#14684b 100%);
+  box-shadow:0 26px 70px rgba(8,46,34,.22);
+}
+.hero:before{
+  content:"";position:absolute;right:-150px;top:-238px;width:540px;height:540px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:0 0 0 72px rgba(255,255,255,.032),0 0 0 146px rgba(255,255,255,.018);
+}
+.hero:after{
+  content:"";position:absolute;left:-130px;bottom:-250px;width:480px;height:480px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,154,63,.18),transparent 66%);
+}
+.hero-grid{position:relative;z-index:1;display:flex;justify-content:space-between;gap:36px;align-items:flex-start}
+.hero-main{min-width:0;max-width:840px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;margin:0 0 18px;
+  color:rgba(255,255,255,.74);font-size:11px;font-weight:750;letter-spacing:.18em;text-transform:uppercase;
+}
+.eyebrow:before{content:"";width:26px;height:2px;border-radius:4px;background:linear-gradient(90deg,#e4bf72,#c99a3f)}
+.brandline{margin:0 0 8px;color:rgba(255,255,255,.78);font-size:14px;font-weight:650;letter-spacing:.16em}
+.hero h1{
+  margin:0;font-size:clamp(34px,5.1vw,54px);line-height:1.1;letter-spacing:-.035em;font-weight:800;
+}
+.hero h1 .accent{color:#eccd8b}
+.hero-copy{margin:17px 0 0;max-width:760px;color:rgba(255,255,255,.76);font-size:14.5px;line-height:1.8}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.hero-meta span{
+  padding:6px 11px;border:1px solid rgba(255,255,255,.17);border-radius:999px;
+  background:rgba(255,255,255,.065);color:rgba(255,255,255,.9);font-size:11.5px;white-space:nowrap;
+}
+.hero-meta span.demo{border-color:rgba(228,191,114,.45);color:#f0d7a3;background:rgba(201,154,63,.12)}
+.hero-side{flex:none;text-align:right;padding-top:4px}
+.hero-date{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.hero-issue{margin-top:5px;color:rgba(255,255,255,.62);font-size:11px;letter-spacing:.08em}
+.hero-rule{width:42px;height:1px;margin:14px 0 0 auto;background:rgba(255,255,255,.28)}
+
+/* sticky nav */
+.section-nav{
+  position:sticky;top:8px;z-index:30;display:flex;align-items:center;gap:3px;
+  margin-top:14px;padding:7px 9px;border:1px solid rgba(212,204,189,.9);border-radius:14px;
+  background:rgba(255,253,249,.9);box-shadow:var(--shadow-soft);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.section-nav a{
+  padding:7px 11px;border-radius:9px;color:var(--muted);font-size:12px;font-weight:650;text-decoration:none;
+  transition:background .18s ease,color .18s ease;
+}
+.section-nav a:hover{background:#f4f0e6;color:var(--ink)}
+.section-nav a.on{background:var(--green-700);color:#fff}
+.section-nav .spacer{flex:1}
+.print-btn{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid var(--line-strong);
+  border-radius:9px;background:transparent;color:var(--muted);font-size:11.5px;font-weight:650;cursor:pointer;
+}
+.print-btn:hover{border-color:var(--green-700);color:var(--green-700)}
+.print-btn svg{width:13px;height:13px}
+
+/* summary */
+.summary{
+  margin-top:16px;padding:24px 26px 22px;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--card);box-shadow:var(--shadow);
+}
+.summary-head{display:grid;grid-template-columns:96px 1fr;gap:18px;align-items:start}
+.summary-head .kicker{
+  display:inline-flex;align-items:center;gap:8px;padding-top:3px;
+  color:var(--green-700);font-size:10.5px;font-weight:800;letter-spacing:.14em;white-space:nowrap;
+}
+.summary-head .kicker:before{content:"";width:3px;height:14px;border-radius:3px;background:var(--gold)}
+.summary-head p{margin:0;color:var(--ink-2);font-size:15px;line-height:1.8}
+.summary-head p b{color:var(--ink);font-weight:750}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:20px}
+.kpi{
+  position:relative;min-width:0;padding:15px 16px 13px;border:1px solid #ebe5d9;border-radius:16px;
+  background:linear-gradient(158deg,#fbf8f1,#fffdf9);
+}
+.kpi.own{border-color:#cfe0d7;background:linear-gradient(158deg,#f2faf5,#fffdf9)}
+.kpi.pos{border-color:#cfe0d7;background:linear-gradient(158deg,#f3faf6,#fffdf9)}
+.kpi.neg{border-color:#ecd6cf;background:linear-gradient(158deg,#fdf7f4,#fffdf9)}
+.kpi.pos .kpi-value{color:var(--pos)}
+.kpi.neg .kpi-value{color:var(--neg)}
+.kpi.neg .kpi-tag{background:#f7e4df;color:#9b3b33}
+.kpi-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.kpi-label{color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.04em}
+.kpi-tag{padding:2px 6px;border-radius:999px;background:var(--green-100);color:var(--green-700);font-size:9px;font-weight:750}
+.kpi-value{margin:6px 0 2px;font-size:31px;font-weight:780;letter-spacing:-.035em;line-height:1.12}
+.kpi-value small{margin-left:2px;color:var(--muted-2);font-size:13px;font-weight:650;letter-spacing:0}
+.kpi-sub{color:var(--muted);font-size:10.5px;line-height:1.5}
+.kpi-sub b{font-weight:750}
+.delta{font-weight:750}
+.delta.good{color:var(--pos)}
+.delta.bad{color:var(--neg)}
+.delta.flat{color:var(--muted)}
+.kpi-graphic{margin-top:8px;height:38px}
+.kpi-graphic svg{display:block;width:100%;height:38px;overflow:visible}
+.rate-bar{height:6px;margin-top:14px;border-radius:99px;background:#eee9de;overflow:hidden}
+.rate-bar span{display:block;height:100%;border-radius:99px}
+.zero-run{display:flex;align-items:center;gap:5px;margin-top:9px;height:38px}
+.zero-run i{
+  width:15px;height:15px;border-radius:50%;background:var(--green-100);border:1px solid #bcd8ca;
+  position:relative;
+}
+.zero-run i:after{
+  content:"";position:absolute;left:4px;top:4px;width:5px;height:3px;border-left:1.5px solid var(--green-700);
+  border-bottom:1.5px solid var(--green-700);transform:rotate(-45deg);
+}
+.zero-run em{margin-left:5px;color:var(--muted);font-size:10px;font-style:normal}
+
+/* section heading */
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:14px}
+.sec-kicker{display:block;color:var(--green-700);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.sec-head h2{margin:3px 0 0;font-size:clamp(21px,2.8vw,28px);line-height:1.25;letter-spacing:-.025em;font-weight:780}
+.sec-head p{margin:5px 0 0;max-width:620px;color:var(--muted);font-size:12px;line-height:1.7}
+.sec-side{flex:none;display:flex;align-items:center;gap:14px;padding-bottom:3px}
+.legend-inline{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:10.5px}
+.legend-inline span{display:inline-flex;align-items:center;gap:5px}
+.legend-inline i{width:12px;height:5px;border-radius:3px;display:inline-block}
+
+/* comparison */
+.cmp{
+  padding:18px 22px 12px;border:1px solid var(--line);border-radius:var(--radius);
+  background:var(--card);box-shadow:var(--shadow);
+}
+.cmp-cols,.cmp-row{display:grid;grid-template-columns:148px minmax(180px,1fr) 250px 86px;gap:18px;align-items:center}
+.cmp-cols{padding:0 8px 9px;border-bottom:1px solid #eee8dc;color:var(--muted-2);font-size:9.5px;font-weight:700;letter-spacing:.07em}
+.cmp-cols span:nth-child(3){text-align:right}
+.cmp-cols span:nth-child(4){text-align:right}
+.cmp-group{padding-top:12px}
+.cmp-group+.cmp-group{margin-top:10px;padding-top:16px;border-top:1px dashed var(--line-strong)}
+.cmp-group-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:0 8px 4px}
+.cmp-group-head b{font-size:13px;font-weight:750;letter-spacing:.01em}
+.cmp-group-head span{color:var(--muted);font-size:10.5px}
+.hint-compact{display:none}
+.cmp-row{padding:11px 8px;border-radius:12px;transition:background .18s ease}
+.cmp-row:hover{background:#faf7ef}
+.cmp-brand{display:flex;align-items:center;gap:8px;min-width:0}
+.cmp-brand .dot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 14%,transparent)}
+.cmp-brand b{font-size:14px;font-weight:750;white-space:nowrap}
+.own-tag{padding:1px 5px;border-radius:4px;background:var(--gold-soft);color:#8a651f;font-size:8.5px;font-weight:750;letter-spacing:.03em}
+.cmp-bar{
+  display:flex;height:18px;border-radius:6px;overflow:hidden;background:#eee9de;
+  box-shadow:inset 0 0 0 1px rgba(23,33,27,.035);
+}
+.cmp-bar .seg{display:flex;flex:0 0 auto;align-items:center;justify-content:center;min-width:0;overflow:hidden}
+.cmp-bar .seg+.seg{box-shadow:inset 2px 0 0 #fffdf9}
+.cmp-bar .seg.pos{background:linear-gradient(180deg,#25845f,#1d7553)}
+.cmp-bar .seg.neu{background:linear-gradient(180deg,#dcc18b,#d2b173)}
+.cmp-bar .seg.neg{background:linear-gradient(180deg,#c05a50,#b5483f)}
+.cmp-bar .seg em{font-style:normal;color:#fff;font-size:9.5px;font-weight:750;letter-spacing:.01em;white-space:nowrap}
+.cmp-bar .seg.neu em{color:#5c4b2a}
+.cmp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:right}
+.cmp-stats div{display:flex;flex-direction:column;gap:0;min-width:0}
+.cmp-stats span{color:var(--muted);font-size:9.5px;line-height:1.4}
+.cmp-stats b{font-size:14.5px;font-weight:750;line-height:1.35;letter-spacing:-.01em}
+.cmp-stats small{color:var(--muted-2);font-size:9px;line-height:1.3}
+.cmp-stats .is-neg b{color:var(--neg)}
+.cmp-stats .is-neg.zero b{color:var(--muted)}
+.cmp-delta{text-align:right}
+.cmp-delta b{display:block;font-size:11.5px;font-weight:750;line-height:1.35}
+.cmp-delta small{display:block;color:var(--muted-2);font-size:8.5px;line-height:1.3}
+.cmp-low{grid-column:2 / span 2;padding:9px 12px;border:1px dashed #ddd3c1;border-radius:9px;background:#fbf8f1;color:var(--muted);font-size:11px}
+.cmp-low b{color:var(--ink);font-weight:750}
+.cmp-row.is-low{background:#fdfaf3}
+
+/* trends */
+.trend-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.seg{display:inline-flex;padding:3px;border:1px solid var(--line-strong);border-radius:999px;background:#f5f1e8}
+.seg button{
+  padding:6px 12px;border:0;border-radius:999px;background:transparent;color:#737b75;
+  font-size:11px;font-weight:650;cursor:pointer;white-space:nowrap;transition:background .18s ease,color .18s ease,box-shadow .18s ease;
+}
+.seg button.on{background:#fffdf9;color:var(--ink);box-shadow:0 1px 4px rgba(23,33,27,.12)}
+.chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.chart-card{
+  position:relative;min-width:0;padding:17px 18px 12px;border:1px solid var(--line);border-radius:18px;
+  background:var(--card);box-shadow:var(--shadow-soft);
+}
+.chart-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.chart-head h3{margin:0;font-size:14.5px;font-weight:750;letter-spacing:-.01em}
+.chart-head p{margin:2px 0 0;color:var(--muted);font-size:10.5px}
+.chart-badge{padding:2px 7px;border-radius:999px;background:#f3eee3;color:var(--muted);font-size:9.5px;font-weight:700;white-space:nowrap}
+.chart-legend{display:flex;gap:13px;flex-wrap:wrap;margin-top:9px}
+.chart-legend span{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:10.5px}
+.chart-legend i{width:13px;height:3px;border-radius:3px}
+.chart-legend b{color:var(--ink);font-weight:750}
+.chart-body{position:relative;margin-top:6px;min-height:238px;touch-action:pan-y}
+.chart-body svg{display:block;width:100%;height:auto;overflow:visible}
+.chart-tip{
+  position:absolute;z-index:6;min-width:156px;padding:9px 11px;border-radius:10px;
+  background:rgba(12,28,20,.95);color:#fff;box-shadow:0 14px 30px rgba(8,30,20,.22);
+  opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .14s ease,transform .14s ease;
+}
+.chart-tip.on{opacity:1;transform:none}
+.chart-tip .d{padding-bottom:5px;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.6);font-size:9.5px}
+.chart-tip .r{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:10.5px}
+.chart-tip .r i{flex:none;width:6px;height:6px;border-radius:50%}
+.chart-tip .r span{flex:1;color:rgba(255,255,255,.78)}
+.chart-tip .r b{font-weight:750;font-variant-numeric:tabular-nums}
+.insight{
+  display:flex;gap:11px;margin-top:14px;padding:14px 16px;border:1px solid #d7e5dc;border-radius:14px;
+  background:linear-gradient(118deg,#f2faf5,#fbfdfb);
+}
+.insight .ic{
+  flex:none;display:grid;place-items:center;width:19px;height:19px;margin-top:2px;border-radius:50%;
+  background:var(--green-700);color:#fff;font-size:10px;font-weight:800;font-style:normal;
+}
+.insight-kicker{display:block;margin-bottom:1px;color:var(--green-700);font-size:9px;font-weight:800;letter-spacing:.12em}
+.insight p{margin:0;color:var(--ink-2);font-size:12.5px;line-height:1.75}
+.insight b{color:var(--ink);font-weight:750}
+
+/* folds */
+.fold{
+  border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:var(--shadow-soft);
+  overflow:hidden;
+}
+.fold summary{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 22px;cursor:pointer;list-style:none}
+.fold summary::-webkit-details-marker{display:none}
+.fold-main{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0}
+.fold-main b{font-size:15px;font-weight:750}
+.fold-main small{color:var(--muted);font-size:10.5px}
+.fold-action{display:inline-flex;flex:none;align-items:center;gap:7px;color:var(--green-700);font-size:11px;font-weight:700}
+.fold-action:before{content:"展开"}
+details[open] .fold-action:before{content:"收起"}
+.fold-action:after{
+  content:"";width:6px;height:6px;margin-top:-3px;border-right:1.5px solid currentColor;
+  border-bottom:1.5px solid currentColor;transform:rotate(45deg);transition:transform .2s ease;
+}
+details[open] .fold-action:after{transform:rotate(-135deg);margin-top:2px}
+.fold-body{padding:0 22px 20px}
+.fold-note{margin:12px 0 0;color:var(--muted);font-size:10px;line-height:1.7}
+
+/* platform table */
+.platform-table{width:100%;border-collapse:separate;border-spacing:0 5px;font-size:11.5px}
+.platform-table th{
+  padding:0 8px 4px;color:var(--muted);font-size:9.5px;font-weight:750;letter-spacing:.04em;text-align:center;
+}
+.platform-table th:first-child{padding-left:12px;text-align:left}
+.platform-table th.own{color:var(--green-700)}
+.platform-table td{padding:0;vertical-align:middle}
+.platform-table td:first-child{
+  padding:8px 12px;color:var(--ink-2);font-size:11.5px;font-weight:650;white-space:nowrap;
+}
+.platform-table .pcell{
+  padding:7px 9px;border-radius:9px;text-align:center;background:var(--heat,#fff);
+  border:1px solid rgba(23,33,27,.035);
+}
+.platform-table .pcell.own{box-shadow:inset 0 0 0 1px rgba(20,104,75,.2)}
+.platform-table .pcell b{display:block;font-size:14px;font-weight:750;line-height:1.25;letter-spacing:-.01em}
+.platform-table .pcell small{display:block;margin-top:1px;color:#5f6c63;font-size:8.5px;line-height:1.3;white-space:nowrap}
+.platform-table .pcell small.hot{color:var(--neg);font-weight:650}
+.platform-table td.own{box-shadow:inset 0 0 0 1px rgba(20,104,75,.16)}
+.heat-key{display:flex;align-items:center;gap:7px;margin-top:10px;color:var(--muted);font-size:9.5px}
+.heat-key .bar{width:82px;height:7px;border-radius:4px;background:linear-gradient(90deg,rgba(20,104,75,.05),rgba(20,104,75,.32))}
+
+/* method */
+.note-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.note-item{padding:14px 15px;border:1px solid #ece6da;border-radius:12px;background:#fbf8f1}
+.note-item h3{margin:0 0 4px;color:var(--green-700);font-size:10px;font-weight:800;letter-spacing:.11em}
+.note-item p{margin:0;color:var(--ink-2);font-size:11.5px;line-height:1.7}
+.note-item b{font-weight:750}
+
+/* footer */
+.foot{
+  display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;
+  margin-top:26px;padding:16px 4px 0;border-top:1px solid var(--line);color:var(--muted);font-size:10.5px;
+}
+.foot-brand{display:flex;align-items:center;gap:9px}
+.foot-brand b{color:var(--ink);font-size:11px;letter-spacing:.04em}
+.foot-brand i{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.foot-meta{display:flex;gap:16px;flex-wrap:wrap}
+.foot-meta span{white-space:nowrap}
+
+/* responsive */
+@media(max-width:900px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cmp-cols,.cmp-row{grid-template-columns:120px minmax(140px,1fr) 218px 74px;gap:12px}
+  .chart-grid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .eyebrow{font-size:10px;letter-spacing:.12em}
+  .hint-full{display:none}
+  .hint-compact{display:inline}
+  .page{width:calc(100% - 28px);padding-top:14px}
+  .hero{padding:30px 24px 28px;border-radius:22px}
+  .hero-grid{display:block}
+  .hero-side{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.13);text-align:left}
+  .hero-date{font-size:18px}
+  .hero-issue{margin-top:0}
+  .hero-rule{display:none}
+  .hero-copy{font-size:13px}
+  .section-nav{overflow:auto;justify-content:flex-start}
+  .section-nav a{white-space:nowrap}
+  .print-btn{margin-left:auto}
+  .summary{padding:19px 18px}
+  .summary-head{grid-template-columns:1fr;gap:7px}
+  .kpis{grid-template-columns:1fr;gap:9px}
+  .kpi{display:grid;grid-template-columns:1fr auto;grid-template-areas:"top top" "value graphic" "sub graphic";align-items:center}
+  .kpi-top{grid-area:top}
+  .kpi-value{grid-area:value}
+  .kpi-sub{grid-area:sub}
+  .kpi-graphic{grid-area:graphic;width:132px;margin:0}
+  .zero-run{grid-area:graphic;width:132px;margin:0;flex-wrap:wrap;gap:4px;align-content:center}
+  .zero-run i{width:12px;height:12px}
+  .zero-run i:after{left:3px;top:4px;width:4px;height:2px}
+  .zero-run em{flex-basis:100%;margin-left:0;margin-top:1px}
+  .sec-head{display:block}
+  .sec-side{margin-top:10px;justify-content:flex-start}
+  .sec-head h2{font-size:23px}
+  .cmp{padding:14px 12px 8px}
+  .cmp-cols{display:none}
+  .cmp-row{
+    grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand delta" "bar bar" "stats stats";
+    gap:8px 12px;padding:12px 6px;
+  }
+  .cmp-brand{grid-area:brand}
+  .cmp-bar{grid-area:bar;height:16px}
+  .cmp-stats{grid-area:stats;text-align:left;gap:4px}
+  .cmp-stats div{flex-direction:row;align-items:baseline;gap:4px}
+  .cmp-stats b{font-size:12.5px}
+  .cmp-stats small{display:none}
+  .cmp-delta{grid-area:delta}
+  .cmp-low{grid-area:bar;grid-column:auto}
+  .chart-card{padding:15px 13px 10px}
+  .chart-legend{gap:10px}
+  .fold summary{padding:15px 16px}
+  .fold-body{padding:0 16px 16px}
+  .note-grid{grid-template-columns:1fr}
+  .foot{display:block}
+  .foot-meta{margin-top:8px;gap:10px}
+}
+@media(max-width:440px){
+  .hero h1{font-size:31px}
+  .brandline{font-size:12px;letter-spacing:.1em}
+  .hero-meta span{font-size:10.5px;padding:5px 9px}
+  .kpi-value{font-size:27px}
+  .kpi-graphic{width:108px}
+  .zero-run{width:108px}
+  .section-nav a{padding:6px 8px;font-size:11px}
+  .print-btn span{display:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{width:100%;padding:0}
+  .section-nav,.trend-controls,.print-btn{display:none!important}
+  .hero{border-radius:14px;box-shadow:none;break-inside:avoid}
+  .summary,.cmp,.chart-card,.fold{box-shadow:none;break-inside:avoid}
+  #compare,#trend{break-before:page;break-inside:avoid}
+  .cmp-cols{display:grid!important}
+  #compare .cmp,#trend .chart-grid{break-inside:avoid}
+  .chart-grid{grid-template-columns:1fr}
+  .chart-card+.chart-card{margin-top:10px}
+  .foot{margin-top:16px}
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+  <header class="hero">
+    <div class="hero-grid">
+      <div class="hero-main">
+        <p class="brandline" id="brandline">品牌 A · 品牌 B · 品牌 C</p>
+        <h1>AI <span class="accent">美誉度</span>对比分析</h1>
+        <p class="hero-copy">同一套 <span id="copyQuestions">60</span> 道问题、<span id="copyPlatforms">6</span> 个 AI 平台、<span id="copyAnswers">360</span> 条回答。先看本期差距，再看各期变化。</p>
+        <div class="hero-meta">
+          <span id="metaQuestions">每品牌 20 题</span>
+          <span id="metaPlatforms">6 个 AI 平台</span>
+          <span id="metaAnswers">360 条回答</span>
+          <span id="metaPeriods">累计 12 期</span>
+          <span class="demo" id="demoChip" title="原型演示：历史期为示意数据">原型演示</span>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div class="hero-date num" id="heroDate">2026.08.18</div>
+        <div class="hero-issue" id="heroIssue">第 12 期 · 周更</div>
+        <div class="hero-rule"></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="section-nav" aria-label="报告章节">
+    <a href="#compare" class="on">本期对比</a>
+    <a href="#trend">正负面趋势</a>
+    <a href="#platforms">平台差异</a>
+    <span class="spacer"></span>
+    <button class="print-btn" id="printBtn" type="button" aria-label="打印或导出 PDF">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>
+      <span>打印 / PDF</span>
+    </button>
+  </nav>
+
+  <section class="summary" aria-labelledby="summaryTitle">
+    <div class="summary-head">
+      <span class="kicker" id="summaryTitle">本期结论</span>
+      <p id="summarySentence"></p>
+    </div>
+    <div class="kpis">
+      <article class="kpi pos">
+        <div class="kpi-top"><span class="kpi-label" id="kpiPosLabel">品牌整体 · 正面率</span><span class="kpi-tag">本品</span></div>
+        <div class="kpi-value num" id="kpiPos">—</div>
+        <div class="kpi-sub" id="kpiPosSub"></div>
+        <div class="kpi-graphic" id="kpiPosSpark"></div>
+      </article>
+      <article class="kpi neg">
+        <div class="kpi-top"><span class="kpi-label" id="kpiNegLabel">品牌整体 · 负面率</span><span class="kpi-tag">本品</span></div>
+        <div class="kpi-value num" id="kpiNeg">—</div>
+        <div class="kpi-sub" id="kpiNegSub"></div>
+        <div class="kpi-graphic" id="kpiNegSpark"></div>
+      </article>
+      <article class="kpi pos">
+        <div class="kpi-top"><span class="kpi-label" id="kpiCatPosLabel">食用油 · 正面率</span><span class="kpi-tag">核心品类</span></div>
+        <div class="kpi-value num" id="kpiCatPos">—</div>
+        <div class="kpi-sub" id="kpiCatPosSub"></div>
+        <div class="kpi-graphic" id="kpiCatPosSpark"></div>
+      </article>
+      <article class="kpi neg">
+        <div class="kpi-top"><span class="kpi-label" id="kpiCatNegLabel">食用油 · 负面率</span><span class="kpi-tag">核心品类</span></div>
+        <div class="kpi-value num" id="kpiCatNeg">—</div>
+        <div class="kpi-sub" id="kpiCatNegSub"></div>
+        <div class="kpi-graphic" id="kpiCatNegSpark"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="compare" aria-labelledby="compareTitle">
+    <div class="sec-head">
+      <div>
+        <h2 id="compareTitle">本期三品牌对比</h2>
+        <p>品牌整体与食用油分两层看。条形为回答构成，右侧为负面率及较上一期变化。</p>
+      </div>
+      <div class="sec-side">
+        <div class="legend-inline" aria-hidden="true">
+          <span><i style="background:#1f7a55"></i>正向</span>
+          <span><i style="background:#d3b273"></i>中性</span>
+          <span><i style="background:#b5483f"></i>负向</span>
+        </div>
+      </div>
+    </div>
+    <div class="cmp">
+      <div class="cmp-cols" aria-hidden="true"><span>品牌</span><span>回答构成</span><span>正面 / 中性 / 负面</span><span>较上期</span></div>
+      <div id="cmpGroups"></div>
+    </div>
+    <p class="fold-note" id="comparisonNote" style="margin:9px 4px 0">pp 为百分点。中性计入严格非正向风险，但不冲抵正负；负面率环比为与上一期相比的变化。</p>
+  </section>
+
+  <section class="section" id="trend" aria-labelledby="trendTitle">
+    <div class="sec-head">
+      <div>
+        <h2 id="trendTitle">各期正面率与负面率</h2>
+        <p>同一批问题按周复采，数据按期累积。切换指标看正面率或负面率；左看品牌整体，右看食用油。</p>
+      </div>
+      <div class="sec-side">
+        <div class="trend-controls">
+          <div class="seg" id="metricSeg" role="group" aria-label="选择指标">
+            <button type="button" data-metric="neg" class="on" aria-pressed="true">负面率</button>
+            <button type="button" data-metric="pos" aria-pressed="false">正面率</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <article class="chart-card">
+        <div class="chart-head">
+          <div><h3 id="layer0Title">品牌整体</h3><p id="negSub">负面率 · 越低越好</p></div>
+          <span class="chart-badge" id="negBadge">累计 12 期</span>
+        </div>
+        <div class="chart-legend" id="negLegend"></div>
+        <div class="chart-body" id="negChart"><div class="chart-tip" id="negTip"></div></div>
+      </article>
+      <article class="chart-card">
+        <div class="chart-head">
+          <div><h3 id="layer1Title">食用油</h3><p id="catSub">负面率 · 越低越好</p></div>
+          <span class="chart-badge" id="catBadge">累计 12 期</span>
+        </div>
+        <div class="chart-legend" id="catLegend"></div>
+        <div class="chart-body" id="catChart"><div class="chart-tip" id="catTip"></div></div>
+      </article>
+    </div>
+    <div class="insight"><i class="ic" aria-hidden="true">i</i><div><p id="trendInsight"></p></div></div>
+  </section>
+
+  <section class="section" id="platforms" aria-labelledby="platformTitle">
+    <details class="fold" open>
+      <summary>
+        <span class="fold-main"><b id="platformTitle">平台差异</b><small>6 个平台 · 每平台 20 条回答</small></span>
+        <span class="fold-action" aria-hidden="true"></span>
+      </summary>
+      <div class="fold-body">
+        <table class="platform-table">
+          <caption class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">各 AI 平台正面率与负面率</caption>
+          <thead><tr id="platformHead"></tr></thead>
+          <tbody id="platformBody"></tbody>
+        </table>
+        <div class="heat-key"><span>正面率</span><span class="bar" aria-hidden="true"></span><span>越高颜色越深</span></div>
+        <p class="fold-note" id="platformNote">每平台回答数见样本；小字为负面率。平台差异仅反映本次样本，不代表平台整体质量。</p>
+      </div>
+    </details>
+  </section>
+
+  <footer class="foot">
+    <div class="foot-brand"><i aria-hidden="true"></i><b>特赞 GEO</b><span>品牌洞察 · 竞品美誉度对比</span></div>
+    <div class="foot-meta"><span id="footAsOf">数据截至 2026-08-18</span><span id="footIssue">第 12 期</span><span id="footGenerated">生成于 2026-08-19 09:12</span></div>
+  </footer>
+</main>
+
+<!-- 周更时只替换这段 JSON：series 为 [正面, 中性, 负向] 的回答条数；platforms 为百分比。 -->
+<script id="report-data" type="application/json">
+{
+  "meta": {
+    "asOf": "2026-08-18",
+    "issue": 12,
+    "cadence": "周更",
+    "questionCount": 20,
+    "platformCount": 6,
+    "answerCount": 360,
+    "perBrand": 120,
+    "perLayer": 60,
+    "referenceBrand": "flm",
+    "demo": true
+  },
+  "brands": [
+    { "key": "jly", "name": "品牌 A", "color": "#14684b", "own": true },
+    { "key": "flm", "name": "品牌 B", "color": "#c08a2e" },
+    { "key": "lh", "name": "品牌 C", "color": "#b45a3c" }
+  ],
+  "layers": ["品牌整体", "食用油"],
+  "periods": [
+    { "date": "2026-06-02", "label": "06/02" },
+    { "date": "2026-06-09", "label": "06/09" },
+    { "date": "2026-06-16", "label": "06/16" },
+    { "date": "2026-06-23", "label": "06/23" },
+    { "date": "2026-06-30", "label": "06/30" },
+    { "date": "2026-07-07", "label": "07/07" },
+    { "date": "2026-07-14", "label": "07/14" },
+    { "date": "2026-07-21", "label": "07/21" },
+    { "date": "2026-07-28", "label": "07/28" },
+    { "date": "2026-08-04", "label": "08/04" },
+    { "date": "2026-08-11", "label": "08/11" },
+    { "date": "2026-08-18", "label": "08/18" }
+  ],
+  "series": {
+    "品牌整体": {
+      "jly": [[36,12,12],[37,12,11],[38,11,11],[38,11,11],[39,11,10],[39,10,11],[40,10,10],[40,11,9],[41,10,9],[41,11,8],[41,10,9],[42,10,8]],
+      "flm": [[49,7,4],[50,7,3],[50,7,3],[51,6,3],[51,7,2],[52,6,2],[51,7,2],[52,6,2],[52,7,1],[52,5,3],[52,5,3],[53,5,2]],
+      "lh":  [[49,9,2],[50,9,1],[51,8,1],[51,9,0],[52,8,0],[52,8,0],[52,8,0],[53,7,0],[53,7,0],[53,7,0],[53,7,0],[53,7,0]]
+    },
+    "食用油": {
+      "jly": [[47,11,2],[48,10,2],[48,11,1],[49,10,1],[49,10,1],[50,9,1],[50,10,0],[50,10,0],[51,9,0],[51,9,0],[51,9,0],[51,9,0]],
+      "flm": [[53,6,1],[54,5,1],[54,6,0],[54,6,0],[55,5,0],[55,5,0],[55,5,0],[55,5,0],[55,5,0],[55,5,0],[55,5,0],[55,5,0]],
+      "lh":  [[52,7,1],[52,8,0],[53,7,0],[53,7,0],[53,7,0],[54,6,0],[54,6,0],[54,6,0],[54,6,0],[54,6,0],[54,6,0],[54,6,0]]
+    }
+  },
+  "platforms": {
+    "order": ["豆包", "DeepSeek", "文心一言", "通义千问", "Kimi", "腾讯元宝"],
+    "rates": {
+      "豆包":     { "jly": [80, 15, 5],  "flm": [95, 5, 0],  "lh": [90, 10, 0] },
+      "DeepSeek": { "jly": [35, 60, 5],  "flm": [65, 30, 5], "lh": [95, 5, 0] },
+      "文心一言": { "jly": [80, 15, 5],  "flm": [95, 5, 0],  "lh": [95, 5, 0] },
+      "通义千问": { "jly": [95, 0, 5],   "flm": [95, 0, 5],  "lh": [85, 15, 0] },
+      "Kimi":     { "jly": [85, 0, 15],  "flm": [95, 5, 0],  "lh": [80, 20, 0] },
+      "腾讯元宝": { "jly": [90, 5, 5],   "flm": [95, 5, 0],  "lh": [90, 10, 0] }
+    }
+  }
+}
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var data = JSON.parse(document.getElementById('report-data').textContent);
+  var brands = data.brands;
+  var periods = data.periods;
+  var layers = data.layers;
+  var LAST = periods.length - 1;
+
+  function fmt(v, d) { return (Math.round(v * 10) / 10).toFixed(d == null ? 1 : d); }
+  function pct(v, d) { return fmt(v, d) + '%'; }
+  function pp(v) { return fmt(Math.abs(v)) + 'pp'; }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function rateAt(layer, key, i) {
+    var a = data.series[layer] && data.series[layer][key] ? data.series[layer][key][i] : null;
+    if (!a) return { pos: 0, neu: 0, neg: 0, total: 0, posPct: 0, neuPct: 0, negPct: 0 };
+    var p = a[0], n = a[1], g = a[2], t = p + n + g;
+    if (!t) return { pos: 0, neu: 0, neg: 0, total: 0, posPct: 0, neuPct: 0, negPct: 0 };
+    return { pos: p, neu: n, neg: g, total: t, posPct: p / t * 100, neuPct: n / t * 100, negPct: g / t * 100 };
+  }
+  function brandByKey(key) {
+    for (var i = 0; i < brands.length; i++) if (brands[i].key === key) return brands[i];
+    return null;
+  }
+  function deltaInfo(d) {
+    if (Math.abs(d) < 0.05) return { text: '→ 0.0', cls: 'flat' };
+    return { text: (d < 0 ? '↓ ' : '↑ ') + pp(d), cls: d < 0 ? 'good' : 'bad' };
+  }
+
+  /* ---------- summary ---------- */
+  var own = brands[0];
+  var L0 = layers[0];
+  var L1 = layers[1] || layers[0];
+  var head = rateAt(L0, own.key, LAST);
+  var cat = rateAt(L1, own.key, LAST);
+  var copy = data.copy || {};
+
+  function put(id, value) {
+    var el = document.getElementById(id);
+    if (el && value != null) el.innerHTML = value;
+  }
+
+  document.title = data.meta.title || document.title;
+  document.getElementById('brandline').textContent = data.meta.brandLine || '';
+  document.getElementById('heroDate').textContent = data.meta.asOf.replace(/-/g, '.');
+  document.getElementById('heroIssue').textContent = '第 ' + data.meta.issue + ' 期 · ' + data.meta.cadence;
+  document.getElementById('metaQuestions').textContent = data.meta.questionCount + ' 道问题';
+  document.getElementById('metaPlatforms').textContent = data.meta.platformCount + ' 个 AI 平台';
+  document.getElementById('metaAnswers').textContent = data.meta.answerCount + ' 条回答';
+  document.getElementById('metaPeriods').textContent = '累计 ' + periods.length + ' 期';
+  document.getElementById('copyQuestions').textContent = data.meta.questionCount;
+  document.getElementById('copyPlatforms').textContent = data.meta.platformCount;
+  document.getElementById('copyAnswers').textContent = data.meta.answerCount;
+  if (!data.meta.demo) {
+    var demoChip = document.getElementById('demoChip');
+    if (demoChip) demoChip.remove();
+  }
+  put('kpiPosLabel', copy.kpiPosLabel);
+  put('kpiPosSub', copy.kpiPosSub);
+  put('kpiNegLabel', copy.kpiNegLabel);
+  put('kpiNegSub', copy.kpiNegSub);
+  put('kpiCatPosLabel', copy.kpiCatPosLabel);
+  put('kpiCatPosSub', copy.kpiCatPosSub);
+  put('kpiCatNegLabel', copy.kpiCatNegLabel);
+  put('kpiCatNegSub', copy.kpiCatNegSub);
+  put('summarySentence', copy.summary);
+  put('comparisonNote', copy.comparisonNote);
+  put('platformNote', copy.platformNote);
+
+  document.getElementById('kpiPos').innerHTML = fmt(head.posPct) + '<small>%</small>';
+  document.getElementById('kpiNeg').innerHTML = fmt(head.negPct) + '<small>%</small>';
+  document.getElementById('kpiCatPos').innerHTML = fmt(cat.posPct) + '<small>%</small>';
+  document.getElementById('kpiCatNeg').innerHTML = fmt(cat.negPct) + '<small>%</small>';
+
+  function seriesPct(layer, metric) {
+    return periods.map(function (_, i) {
+      var r = rateAt(layer, own.key, i);
+      return metric === 'pos' ? r.posPct : r.negPct;
+    });
+  }
+
+  function renderKpiGraphic(id, values, color, label) {
+    var el = document.getElementById(id);
+    if (periods.length > 1) {
+      el.innerHTML = sparkline(values, color, label);
+    } else {
+      el.innerHTML = '<div class="rate-bar"><span style="width:' + clamp(values[0], 0, 100) +
+        '%;background:' + color + '"></span></div>';
+    }
+  }
+
+  renderKpiGraphic('kpiPosSpark', seriesPct(L0, 'pos'), '#1f7a55', '品牌整体正面率走势');
+  renderKpiGraphic('kpiNegSpark', seriesPct(L0, 'neg'), '#b5483f', '品牌整体负面率走势');
+  renderKpiGraphic('kpiCatPosSpark', seriesPct(L1, 'pos'), '#1f7a55', '食用油正面率走势');
+  renderKpiGraphic('kpiCatNegSpark', seriesPct(L1, 'neg'), '#b5483f', '食用油负面率走势');
+
+  var sparkSeq = 0;
+  function sparkline(values, color, label) {
+    var w = 220, h = 38, padX = 3, padY = 5;
+    var min = Math.min.apply(null, values), max = Math.max.apply(null, values);
+    var span = (max - min) || 1;
+    var pts = values.map(function (v, i) {
+      var x = values.length === 1 ? w / 2 : padX + i * (w - padX * 2) / (values.length - 1);
+      return [x, h - padY - (v - min) / span * (h - padY * 2)];
+    });
+    var d = pts.map(function (p, i) { return (i ? 'L' : 'M') + fmt(p[0], 2) + ' ' + fmt(p[1], 2); }).join(' ');
+    var area = d + 'L' + fmt(pts[pts.length - 1][0], 2) + ' ' + (h - 1) + 'L' + fmt(pts[0][0], 2) + ' ' + (h - 1) + 'Z';
+    var gid = 'sg-' + (++sparkSeq);
+    var last = pts[pts.length - 1];
+    return '<svg viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + (label || '走势') + '">' +
+      '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" stop-color="' + color + '" stop-opacity=".18"/>' +
+      '<stop offset="1" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
+      '<path d="' + area + '" fill="url(#' + gid + ')"/>' +
+      '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<circle cx="' + fmt(last[0], 2) + '" cy="' + fmt(last[1], 2) + '" r="3" fill="#fffdf9" stroke="' + color + '" stroke-width="1.8"/>' +
+      '</svg>';
+  }
+  /* ---------- comparison ---------- */
+  function cmpRow(layer, brand) {
+    var r = rateAt(layer, brand.key, LAST);
+    var p = LAST > 0 ? rateAt(layer, brand.key, LAST - 1) : r;
+    var d = LAST === 0 ? { text: '首期', cls: 'flat' } : deltaInfo(r.negPct - p.negPct);
+    if (!brand.own && r.total < (data.meta.minSample || 20)) {
+      return '<div class="cmp-row is-low" role="group" aria-label="' + brand.name + ' ' + layer + ' 样本不足">' +
+        '<div class="cmp-brand"><span class="dot" style="--brand:' + brand.color + '"></span><b>' + brand.name + '</b></div>' +
+        '<div class="cmp-low">竞品提及仅 <b>' + r.total + '</b> 条，样本不足，不展示占比</div>' +
+        '<div class="cmp-delta"><b class="flat">—</b><small>样本不足</small></div></div>';
+    }
+    var seg = function (cls, value, text, label) {
+      if (value <= 0) return '';
+      return '<span class="seg ' + cls + '" style="width:' + value + '%" title="' + label + ' ' + pct(value) + '">' +
+        (value >= 8.5 ? '<em>' + pct(value) + '</em>' : '') + '</span>';
+    };
+    return '<div class="cmp-row" role="group" aria-label="' + brand.name + ' ' + layer + '：正面 ' + pct(r.posPct) +
+      '，中性 ' + pct(r.neuPct) + '，负面 ' + pct(r.negPct) + '">' +
+      '<div class="cmp-brand"><span class="dot" style="--brand:' + brand.color + '"></span><b>' + brand.name + '</b>' +
+      (brand.own ? '<span class="own-tag">本品</span>' : '') + '</div>' +
+      '<div class="cmp-bar" aria-hidden="true">' +
+      seg('pos', r.posPct, r.pos, '正向') +
+      seg('neu', r.neuPct, r.neu, '中性') +
+      seg('neg', r.negPct, r.neg, '负向') +
+      '</div>' +
+      '<div class="cmp-stats">' +
+      '<div><span>正面</span><b>' + pct(r.posPct) + '</b><small>' + r.pos + ' 条</small></div>' +
+      '<div><span>中性</span><b>' + pct(r.neuPct) + '</b><small>' + r.neu + ' 条</small></div>' +
+      '<div class="is-neg' + (r.neg === 0 ? ' zero' : '') + '"><span>负面</span><b>' + pct(r.negPct) + '</b><small>' + r.neg + ' 条</small></div>' +
+      '</div>' +
+      '<div class="cmp-delta"><b class="' + d.cls + '">' + d.text + '</b><small>较上期</small></div>' +
+      '</div>';
+  }
+  document.getElementById('cmpGroups').innerHTML = layers.map(function (layer) {
+    var hint = (copy.layerHints && copy.layerHints[layer]) || '';
+    return '<div class="cmp-group"><div class="cmp-group-head"><b>' + layer + '</b><span><span class="hint-full">' + hint + '</span><span class="hint-compact">' + hint + '</span></span></div>' +
+      brands.map(function (b) { return cmpRow(layer, b); }).join('') + '</div>';
+  }).join('');
+
+  /* ---------- trend charts ---------- */
+  var NS = 'http://www.w3.org/2000/svg';
+  function chartGeometry(width) {
+    var pad = { l: 38, r: 16, t: 22, b: 28 };
+    return { width: width, height: 244, pad: pad, innerW: width - pad.l - pad.r, innerH: 244 - pad.t - pad.b };
+  }
+  function niceMax(raw, metric) {
+    if (metric === 'pos') return 100;
+    var v = Math.ceil((raw + 1) / 5) * 5;
+    return Math.max(5, v);
+  }
+  var trendMetric = 'neg';
+
+  function activeBrands(layer) {
+    var low = (data.meta.lowSample && data.meta.lowSample[layer]) || [];
+    return brands.filter(function (b) { return low.indexOf(b.key) < 0; });
+  }
+
+  function trendValues(layer, key, offset, metric) {
+    var out = [];
+    for (var i = offset; i < periods.length; i++) {
+      var r = rateAt(layer, key, i);
+      out.push(metric === 'pos' ? r.posPct : r.negPct);
+    }
+    return out;
+  }
+
+  function buildChart(targetId, layer, offset, metric) {
+    var visible = periods.slice(offset);
+    var series = activeBrands(layer).map(function (b) {
+      return { brand: b, values: trendValues(layer, b.key, offset, metric) };
+    });
+    var rawMax = 0;
+    series.forEach(function (s) { s.values.forEach(function (v) { if (v > rawMax) rawMax = v; }); });
+    var max = niceMax(rawMax, metric);
+    var body = document.getElementById(targetId);
+    var width = Math.max(300, Math.floor(body.clientWidth || 520));
+    var g = chartGeometry(width);
+    var n = visible.length;
+    var xAt = function (i) { return g.pad.l + (n === 1 ? g.innerW / 2 : i * g.innerW / (n - 1)); };
+    var yAt = function (v) { return g.pad.t + g.innerH - (v / max) * g.innerH; };
+    var baseline = g.pad.t + g.innerH;
+    var ticks = 5;
+    var uid = 'area-' + targetId + '-' + metric;
+    var metricName = metric === 'pos' ? '正面率' : '负面率';
+    var svg = '<svg viewBox="0 0 ' + width + ' ' + g.height + '" role="img" aria-label="' +
+      layer + metricName + '趋势图，共 ' + n + ' 期">';
+
+    svg += '<defs><linearGradient id="' + uid + '" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" stop-color="' + own.color + '" stop-opacity=".14"/>' +
+      '<stop offset="1" stop-color="' + own.color + '" stop-opacity="0"/></linearGradient></defs>';
+
+    for (var t = 0; t <= ticks; t++) {
+      var v = max * t / ticks;
+      var y = yAt(v);
+      svg += '<line x1="' + g.pad.l + '" y1="' + fmt(y, 2) + '" x2="' + (width - g.pad.r) + '" y2="' + fmt(y, 2) + '" stroke="' +
+        (t === 0 ? '#d9d2c4' : '#ece6da') + '" stroke-width="1" stroke-dasharray="' + (t === 0 ? '0' : '3 4') + '"/>';
+      svg += '<text x="' + (g.pad.l - 9) + '" y="' + fmt(y + 3.2, 2) + '" text-anchor="end" fill="#8d958f" font-size="9">' + fmt(v, max <= 5 ? 1 : 0) + '%</text>';
+    }
+
+    visible.forEach(function (p, i) {
+      var show = n <= 6 || i === 0 || i === n - 1 || i % 3 === 0;
+      if (!show) return;
+      svg += '<text x="' + fmt(xAt(i), 2) + '" y="' + (g.height - 7) + '" text-anchor="middle" fill="' +
+        (i === n - 1 ? '#3c473f' : '#8d958f') + '" font-size="9" font-weight="' + (i === n - 1 ? '700' : '500') + '">' + p.label + '</text>';
+    });
+
+    svg += '<text x="' + (width - g.pad.r) + '" y="12" text-anchor="end" fill="#b08a3e" font-size="9" font-weight="700">本期</text>';
+    if (rawMax === 0) {
+      svg += '<text x="' + (g.pad.l + g.innerW / 2) + '" y="' + (g.pad.t + g.innerH / 2) + '" text-anchor="middle" fill="#8d958f" font-size="10">' +
+        (metric === 'pos' ? '本区间无正面回答' : '本区间无负面') + '</text>';
+    }
+    svg += '<line x1="' + fmt(xAt(n - 1), 2) + '" y1="' + g.pad.t + '" x2="' + fmt(xAt(n - 1), 2) + '" y2="' + baseline + '" stroke="#d8c9a8" stroke-width="1" stroke-dasharray="3 4" opacity=".7"/>';
+
+    var ownSeries = series[0];
+    var areaD = 'M' + fmt(xAt(0), 2) + ' ' + fmt(baseline, 2) + ' ' +
+      ownSeries.values.map(function (v, i) { return 'L' + fmt(xAt(i), 2) + ' ' + fmt(yAt(v), 2); }).join(' ') +
+      ' L' + fmt(xAt(n - 1), 2) + ' ' + fmt(baseline, 2) + ' Z';
+    if (metric !== 'pos') svg += '<path d="' + areaD + '" fill="url(#' + uid + ')"/>';
+
+    series.forEach(function (s, bi) {
+      var d = s.values.map(function (v, i) { return (i ? 'L' : 'M') + fmt(xAt(i), 2) + ' ' + fmt(yAt(v), 2); }).join(' ');
+      svg += '<path class="ln' + (bi === 0 ? ' own' : '') + '" d="' + d + '" fill="none" stroke="' + s.brand.color +
+        '" stroke-width="' + (bi === 0 ? 2.6 : 1.7) + '" stroke-linecap="round" stroke-linejoin="round" opacity="' + (bi === 0 ? 1 : .88) + '"/>';
+      s.values.forEach(function (v, i) {
+        var isLast = i === n - 1;
+        svg += '<circle cx="' + fmt(xAt(i), 2) + '" cy="' + fmt(yAt(v), 2) + '" r="' + (isLast ? 3.4 : 2.1) +
+          '" fill="' + (isLast ? '#fffdf9' : s.brand.color) + '" stroke="' + s.brand.color + '" stroke-width="' + (isLast ? 2 : 1.2) + '"/>';
+      });
+    });
+
+    svg += '<g class="hover-g" style="display:none">' +
+      '<line class="hover-line" y1="' + g.pad.t + '" y2="' + baseline + '" stroke="#7d8a81" stroke-width="1" stroke-dasharray="3 3" opacity=".65"/>' +
+      series.map(function (s) {
+        return '<circle class="hover-dot" r="4" fill="' + s.brand.color + '" stroke="#fffdf9" stroke-width="2"/>';
+      }).join('') + '</g>';
+    svg += '<rect class="overlay" x="' + g.pad.l + '" y="' + g.pad.t + '" width="' + g.innerW + '" height="' + g.innerH + '" fill="transparent"/>';
+    svg += '</svg>';
+
+    var old = body.querySelector('svg');
+    if (old) old.remove();
+    body.insertAdjacentHTML('afterbegin', svg);
+
+    var svgEl = body.querySelector('svg');
+    bindHover(body, svgEl, g, visible, offset, series, max);
+  }
+
+  function bindHover(body, svgEl, g, visible, offset, series, max) {
+    var tip = body.querySelector('.chart-tip');
+    var overlay = svgEl.querySelector('.overlay');
+    var hover = svgEl.querySelector('.hover-g');
+    var line = svgEl.querySelector('.hover-line');
+    var dots = svgEl.querySelectorAll('.hover-dot');
+    var n = visible.length;
+    var xAt = function (i) { return g.pad.l + (n === 1 ? g.innerW / 2 : i * g.innerW / (n - 1)); };
+
+    function move(ev) {
+      var rect = svgEl.getBoundingClientRect();
+      var px = ev.clientX - rect.left;
+      var ratio = clamp((px - g.pad.l) / g.innerW, 0, 1);
+      var idx = Math.round(ratio * (n - 1));
+      var x = xAt(idx);
+      line.setAttribute('x1', x); line.setAttribute('x2', x);
+      hover.style.display = '';
+      for (var i = 0; i < dots.length; i++) {
+        var v = series[i].values[idx];
+        dots[i].setAttribute('cx', x);
+        dots[i].setAttribute('cy', g.pad.t + g.innerH - (v / max) * g.innerH);
+      }
+      var rows = series.map(function (s, i) {
+        return { color: s.brand.color, name: s.brand.name, value: s.values[idx] };
+      }).sort(function (a, b) { return b.value - a.value; });
+      tip.innerHTML = '<div class="d">' + visible[idx].date + ' · 第 ' + (offset + idx + 1) + ' 期</div>' +
+        rows.map(function (r) {
+          return '<div class="r"><i style="background:' + r.color + '"></i><span>' + r.name + '</span><b>' + pct(r.value) + '</b></div>';
+        }).join('');
+      var tipW = 168;
+      var left = px + 14;
+      if (left + tipW > body.clientWidth - 4) left = px - tipW - 14;
+      tip.style.left = Math.max(4, left) + 'px';
+      tip.style.top = '4px';
+      tip.classList.add('on');
+    }
+    function leave() {
+      tip.classList.remove('on');
+      hover.style.display = 'none';
+    }
+    overlay.addEventListener('pointermove', move);
+    overlay.addEventListener('pointerdown', move);
+    overlay.addEventListener('pointerleave', leave);
+    overlay.addEventListener('pointercancel', leave);
+  }
+
+  function legend(id, layer, metric) {
+    var el = document.getElementById(id);
+    el.innerHTML = activeBrands(layer).map(function (b) {
+      var r = rateAt(layer, b.key, LAST);
+      return '<span><i style="background:' + b.color + '"></i>' + b.name + ' <b>' +
+        pct(metric === 'pos' ? r.posPct : r.negPct) + '</b></span>';
+    }).join('');
+  }
+
+  function renderTrends() {
+    buildChart('negChart', '品牌整体', 0, trendMetric);
+    buildChart('catChart', '食用油', 0, trendMetric);
+    legend('negLegend', '品牌整体', trendMetric);
+    legend('catLegend', '食用油', trendMetric);
+    var badge = '累计 ' + periods.length + ' 期';
+    document.getElementById('negBadge').textContent = badge;
+    document.getElementById('catBadge').textContent = badge;
+    var sub = trendMetric === 'pos' ? '正面率 · 越高越好' : '负面率 · 越低越好';
+    document.getElementById('negSub').textContent = sub;
+    document.getElementById('catSub').textContent = sub;
+    document.getElementById('layer0Title').textContent = L0;
+    document.getElementById('layer1Title').textContent = L1;
+    document.getElementById('trendInsight').innerHTML = (copy.insights && copy.insights[trendMetric]) || '';
+  }
+
+  document.getElementById('metricSeg').addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-metric]');
+    if (!btn) return;
+    trendMetric = btn.getAttribute('data-metric');
+    this.querySelectorAll('button').forEach(function (b) {
+      var on = b === btn;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+    document.getElementById('footAsOf').textContent = '数据截至 ' + data.meta.asOf;
+  document.getElementById('footIssue').textContent = '第 ' + data.meta.issue + ' 期';
+  document.getElementById('footGenerated').textContent = '生成于 ' + (data.meta.generatedAt || '');
+
+  renderTrends();
+  });
+
+  /* ---------- platform ---------- */
+  function heat(v) {
+    var a = clamp((v - 30) / 65, 0, 1);
+    return 'rgba(20,104,75,' + fmt(0.035 + a * 0.20, 3) + ')';
+  }
+  var ph = document.getElementById('platformHead');
+  ph.innerHTML = '<th>平台</th>' + brands.map(function (b) {
+    return '<th class="' + (b.own ? 'own' : '') + '">' + b.name + '</th>';
+  }).join('');
+  document.getElementById('platformBody').innerHTML = data.platforms.order.map(function (p) {
+    return '<tr><td>' + p + '</td>' + brands.map(function (b) {
+      var r = data.platforms.rates[p][b.key];
+      var neg = r[2];
+      return '<td><div class="pcell' + (b.own ? ' own' : '') + '" style="--heat:' + heat(r[0]) + '">' +
+        '<b>' + fmt(r[0]) + '%</b><small class="' + (neg > 0 ? 'hot' : '') + '">负面 ' + fmt(neg) + '%</small></div></td>';
+    }).join('') + '</tr>';
+  }).join('');
+
+  /* ---------- nav / print ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.section-nav a'));
+  var linkMap = {};
+  links.forEach(function (a) { linkMap[a.getAttribute('href').slice(1)] = a; });
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (a) { a.classList.remove('on'); });
+        var link = linkMap[entry.target.id];
+        if (link) link.classList.add('on');
+      });
+    }, { rootMargin: '-15% 0px -65% 0px', threshold: 0 });
+    ['compare', 'trend', 'platforms'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+  }
+  document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+  window.addEventListener('beforeprint', function () {
+    document.querySelectorAll('details').forEach(function (d) { d.open = true; });
+  });
+
+  document.getElementById('footAsOf').textContent = '数据截至 ' + data.meta.asOf;
+  document.getElementById('footIssue').textContent = '第 ' + data.meta.issue + ' 期';
+  document.getElementById('footGenerated').textContent = '生成于 ' + (data.meta.generatedAt || '');
+
+  renderTrends();
+  window.addEventListener('resize', function () {
+    clearTimeout(window.__rcResize);
+    window.__rcResize = setTimeout(renderTrends, 140);
+  });
+})();
+</script>
+</body>
+</html>
